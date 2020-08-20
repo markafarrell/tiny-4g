@@ -1,0 +1,85 @@
+version: "3.8"
+services:
+  ue:
+    build:
+      context: ./UE
+    command: start.sh
+    networks:
+      UUNet:
+        ipv4_address: 10.0.0.2
+    cap_add:
+      - NET_ADMIN
+    extra_hosts:
+      - web-server:10.0.4.6
+  enb:
+    build:
+      context: ./eNB
+    command: start.sh
+    networks:
+      UUNet:
+        ipv4_address: 10.0.0.3
+      S1UNet:
+        ipv4_address: 10.0.1.3
+      S1CNet:
+        ipv4_address: 10.0.2.3
+    cap_add:
+      - NET_ADMIN
+  mme:
+    build:
+      context: ./MME
+    command: sleep infinity
+    networks:
+      S1CNet:
+        ipv4_address: 10.0.2.4
+      S5Net:
+        ipv4_address: 10.0.3.4
+    cap_add:
+      - NET_ADMIN
+  pgw-sgw:
+    build:
+      context: ./PGW-SGW
+    command: start.sh
+    networks:
+      S1UNet:
+        ipv4_address: 10.0.1.5
+      S5Net:
+        ipv4_address: 10.0.3.5
+      SGiNet:
+        ipv4_address: 10.0.4.5
+    cap_add:
+      - NET_ADMIN
+  web-server:
+    build:
+      context: ./web-server
+    command: start.sh
+    networks:
+      SGiNet:
+        ipv4_address: 10.0.4.6
+    cap_add:
+      - NET_ADMIN
+networks:
+  UUNet:
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.0.0.0/24
+  S1UNet:
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.0.1.0/24
+  S1CNet:
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.0.2.0/24
+  S5Net:
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.0.3.0/24
+  SGiNet:
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.0.4.0/24
