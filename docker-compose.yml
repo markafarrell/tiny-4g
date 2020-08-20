@@ -3,6 +3,11 @@ services:
   ue:
     build:
       context: ./UE
+    depends_on:
+      - enb
+      - mme
+      - pgw-sgw
+      - web-server
     command: start.sh
     networks:
       UUNet:
